@@ -19,7 +19,7 @@ class DatabaseController:
             name=table_name,
             con=self.engine,
             schema=schema,
-            if_exists="append",
+            if_exists="append", # KHÔNG ĐƯỢC THAY ĐỔI: Sử dụng append để database tự map tên cột và bỏ trống cột mà dataframe không có
             index=False,
             chunksize=chunksize,
             method=self._psql_insert_copy

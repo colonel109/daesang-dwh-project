@@ -31,6 +31,9 @@ class SalesDataProcessor:
                 suffix = Path(file).suffix
 
                 file_type = self.check_file_type(file_name)
+                if not file_type:
+                    print(f"Không thể xác định phân loại cho tệp: {file}, huỷ chương trình...")
+                    return
                 
                 # Đọc file excel
                 print(f"Đang xử lí file {file_name}")
@@ -39,14 +42,15 @@ class SalesDataProcessor:
                         has_missing_col = False # Đánh dấu file có thiếu cột không
                         raw_col_list = pd.read_excel(file, nrows=0).columns.tolist() # Lấy tên cột có trong file gốc
 
-                        for col_name, raw_col_name_list in self.config_data.col_req_dict.items():
-                            # Trường hợp thiếu cột không nằm trong loại file order / ar_invoice
-                            col_exclusive_compare = self.config_data.col_exclusive_dict.get(col_name)
-                            if col_exclusive_compare and col_exclusive_compare != file_type:
+                        for col_name, raw_col_name_list in self.config_data.col_req_dict.items():                           
+                            # Trường hợp thiếu cột: cột bắt buộc không nằm trong cả hai loại file order / ar_invoice
+                            col_exclusive_compare = self.config_data.col_exclusive_dict.get(col_name) # Trả về file_type
+                            if col_exclusive_compare and col_exclusive_compare != file_type: # Nếu cột khác với file_type thì có thể bỏ qua 
                                 continue
                             
                             # Trường hợp không tìm thấy cột nào được map với tên cột trong file gốc
-                            if not any(col in raw_col_name_list for col in raw_col_list): 
+                            can_skip = self.config_data.col_optional.get(col_name)
+                            if not any(col in raw_col_name_list for col in raw_col_list) and not can_skip:
                                 not_mapped_info = {
                                     "Tên file ": file.stem,
                                     "Tên cột chưa map": col_name

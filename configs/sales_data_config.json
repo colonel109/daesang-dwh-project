@@ -200,7 +200,8 @@
   },
   "location_code": {
     "raw_name": ["Address Code"],
-    "dtype": "string"
+    "dtype": "string",
+    "optional": true
   },
   "remark": {
     "raw_name": ["Remark", "COMMENTS"],

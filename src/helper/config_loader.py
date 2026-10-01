@@ -11,6 +11,7 @@ class ConfigLoader:
         self.col_use = None
         self.rename_dict = None
         self.dtype_dict = None
+        self.col_optional = None
 
         self.config_loader()
 
@@ -44,6 +45,11 @@ class ConfigLoader:
             raw_name: new_col_name 
             for new_col_name, data in self.config_data.items()
             for raw_name in data["raw_name"] 
+        }
+
+        self.col_optional = {
+            col_name: data["optional"]
+            for col_name, data in self.config_data.items() if data.get("optional")
         }
 
         self.dtype_dict = {col: dict_data["dtype"] for col, dict_data in self.config_data.items()}
