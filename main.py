@@ -103,14 +103,14 @@ class MainPipeline:
             
             # Xoá dữ liệu cũ ở bảng transactions staging
             self.database_controller.truncate_table(
-                target_table="profit_and_loss",
+                target_table="profit_and_loss_staging",
                 target_schema="staging"
             )
 
             # Insert data vào staging
             self.database_controller.insert_dataframe(
                 df=result,
-                table_name="profit_and_loss",
+                table_name="profit_and_loss_staging",
                 schema="staging"
             )
 
@@ -127,6 +127,7 @@ class MainPipeline:
             # Làm mới dữ liệu của view
             view_to_refresh = ["view_pl_normalized"]
             for view in view_to_refresh:
+                print(f"Đang làm mới dữ liệu {view}")
                 self.database_controller.refresh_view(
                     target_schema="main",
                     target_view=view
@@ -141,13 +142,13 @@ class MainPipeline:
             self.result_writer.write_result(data_list=result)
 
         self.database_controller.truncate_table(
-            target_table="business_partner", 
+            target_table="business_partner_staging", 
             target_schema="staging"
         )
 
         self.database_controller.insert_dataframe(
             df=result,
-            table_name="business_partner", 
+            table_name="business_partner_staging", 
             schema="staging"
         )
 

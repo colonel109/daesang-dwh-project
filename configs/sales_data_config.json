@@ -23,6 +23,10 @@
     "raw_name": ["Group", "GROUPNAME"],
     "dtype": "string"
   },
+  "business_place_name": {
+    "raw_name": ["Business Place", "BPLNAME"],
+    "dtype": "string"
+  },
   "product_code": {
     "raw_name": ["Item code", "ITEMCODE"],
     "dtype": "string"

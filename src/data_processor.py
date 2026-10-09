@@ -131,7 +131,7 @@ class SalesDataProcessor:
                 base_price, discount_percent, discounted_price,
                 discounted_price_tax, sales_amount, sales_amount_fc,
                 tax_amount, tax_amount_fc, sales_amount_tax,
-                sales_amount_fc_tax, return_quantity, remark, order_type_key, location_key
+                sales_amount_fc_tax, return_quantity, remark, order_type_key, location_key, business_place_key
             )
             SELECT
                 business_partner_key,
@@ -160,7 +160,8 @@ class SalesDataProcessor:
                 t.return_quantity,
                 t.remark,
                 COALESCE(ots.order_type_key, 0) AS order_type_key,
-                COALESCE(st.location_key, 0) AS location_key
+                COALESCE(st.location_key, 0) AS location_key,
+                COALESCE(bps.business_place_key, 0) AS business_place_key
             FROM staging.transactions_staging t
             JOIN main.business_partner bp 
                 ON t.business_partner_code = bp.business_partner_code 
@@ -178,6 +179,7 @@ class SalesDataProcessor:
             LEFT JOIN staging.return_type_staging rts ON t.return_type_code = rts.raw_value
             LEFT JOIN staging.uom_staging us ON t.uom_name = us.raw_value
             LEFT JOIN staging.tax_staging ts ON t.tax_code = ts.raw_value
+            LEFT JOIN staging.business_place_staging bps ON t.business_place_name = bps.raw_value
             LEFT JOIN staging.order_type_staging ots ON t.order_type_name = ots.raw_value
             """
             )
@@ -397,7 +399,7 @@ class ProfitAndLossProcessor:
                 COALESCE(pal.travelling_s, 0) AS travelling_s,
                 COALESCE(pal.water_lighting_a, 0) AS water_lighting_a,
                 COALESCE(pal.water_lighting_s, 0) AS water_lighting_s
-            FROM staging.profit_and_loss pal
+            FROM staging.profit_and_loss_staging pal
             LEFT JOIN main.profit_center pc USING (profit_center_code)
             LEFT JOIN main.business_partner bp
                 ON pal.business_partner_code = bp.business_partner_code 
@@ -477,7 +479,7 @@ class BusinessPartnerUpdater:
             """
             UPDATE main.business_partner bp
             SET (creation_date, ship_to_street, bill_to_street) = (bps.creation_date, bps.ship_to_street, bps.bill_to_street)
-            FROM staging.business_partner bps 
+            FROM staging.business_partner_staging bps 
             WHERE bp.business_partner_code = bps.business_partner_code
         """
         )
