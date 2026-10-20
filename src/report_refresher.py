@@ -114,6 +114,7 @@ class ReportRefresher:
                     wb.RefreshAll()
                     excel.CalculateUntilAsyncQueriesDone()
 
+                # Thoát và lưu file sau khi làm mới dữ liệu thành công để tiết kiệm tài nguyên
                 wb.Save()
                 wb.Close()
                 timestamp = datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
@@ -131,11 +132,11 @@ class ReportRefresher:
             process_order += 1
                            
         if has_error:
-            print("Quá trình xử lí file gặp lỗi, các báo cáo gặp lỗi:")
+            print("\u26A0\uFE0F Hoàn thành, các báo cáo gặp lỗi:")
 
             n=1
             for f in file_has_error:
-                print(f"{n}: {f}\n")
+                print(f"{n}: {f}")
                 n+=1
         
         excel.Quit()
