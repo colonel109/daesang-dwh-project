@@ -116,11 +116,10 @@ class ReportRefresher:
                     wb.Save()
                     wb.Close()
 
-                    # Tạo file kèm nhãn thời gian sau khi thành công
-                    timestamp = datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
-                    dst = self.result_path / f"({timestamp}) {file_name}{file_path.suffix}"
-                    copy(file_path, dst)
-
+                # Tạo file kèm nhãn thời gian sau khi thành công và chuyển tới thư mục đích
+                timestamp = datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
+                dst = self.result_path / f"({timestamp}) {file_name}{file_path.suffix}"
+                copy(file_path, dst)
                 print("\t\u2705 đã tạo báo cáo thành công")
 
             except pywintypes.com_error as e:
