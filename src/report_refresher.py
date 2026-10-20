@@ -113,14 +113,13 @@ class ReportRefresher:
                     print("\tĐang làm mới toàn bộ bảng")
                     wb.RefreshAll()
                     excel.CalculateUntilAsyncQueriesDone()
-                    wb.Save()
-                    wb.Close()
 
-                # Tạo file kèm nhãn thời gian sau khi thành công và chuyển tới thư mục đích
+                wb.Save()
+                wb.Close()
                 timestamp = datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
                 dst = self.result_path / f"({timestamp}) {file_name}{file_path.suffix}"
                 copy(file_path, dst)
-                print("\t\u2705 đã tạo báo cáo thành công")
+                print("\t\u2705 Đã tạo báo cáo thành công")
 
             except pywintypes.com_error as e:
                 print(f"\t\u274C Tạo báo cáo thất bại, đang đóng file:\n{e}")
