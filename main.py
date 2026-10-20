@@ -6,7 +6,8 @@ from src.data_inspector import DebugViewInspector
 from src.helper.result_writer import ResultWriter
 from src.pipeline_selector import PipelineSelector
 from src.report_refresher import ReportRefresher
-import questionary
+from dotenv import load_dotenv
+import questionary, os
 
 
 class MainPipeline:
@@ -160,11 +161,15 @@ DATA_PATH = BASE_PATH / "data"
 REPORT_PATH = BASE_PATH / "reports"
 
 if __name__ == "__main__":    
+
+    load_dotenv()
+    
+    conn_str = f"postgresql+psycopg://{os.getenv("db_user_name")}:{os.getenv("db_user_password")}@{os.getenv("db_host")}/{os.getenv("db_name")}"
     main_pipeline = MainPipeline(
         base_path=BASE_PATH,
         data_path=DATA_PATH,
         report_path=REPORT_PATH,
-        engine=create_engine("postgresql+psycopg://postgres:duong1234@localhost:5432/daesang_db_main")
+        engine=create_engine(conn_str)
     )
 
     main_pipeline.main_process()
