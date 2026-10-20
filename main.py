@@ -164,7 +164,7 @@ if __name__ == "__main__":
 
     load_dotenv()
     
-    conn_str = f"postgresql+psycopg://{os.getenv("db_user_name")}:{os.getenv("db_user_password")}@{os.getenv("db_host")}/{os.getenv("db_name")}"
+    conn_str = f"postgresql+psycopg://{os.getenv("USER_NAME")}:{os.getenv("USER_PASSWORD")}@{os.getenv("DB_HOST")}/{os.getenv("DB_NAME")}"
     main_pipeline = MainPipeline(
         base_path=BASE_PATH,
         data_path=DATA_PATH,
