@@ -1,9 +1,9 @@
 import pandas as pd
 from pathlib import Path
-from sqlalchemy import text
 import re
 
 from src.helper.config_loader import ConfigLoader
+from src.database.controller import DatabaseController
 
 
 class SalesDataProcessor:
@@ -12,8 +12,8 @@ class SalesDataProcessor:
     """
 
     def __init__(self, engine):
-        self.engine = engine
         self.config_data = ConfigLoader(r"configs/sales_data_config.json")
+        self.db_controller = DatabaseController(engine=engine)
         
     def read_excel(self, file_path_list: list):
         """
@@ -117,8 +117,7 @@ class SalesDataProcessor:
         Lấy dữ liệu từ bảng staging trong database và import vào bảng đích
         """
         
-        query = text(
-            f"""
+        query = f"""
             INSERT INTO main.{target_table} (
                 business_partner_key, product_key, source_product_key,
                 document_type_key, sell_type_key,
@@ -182,16 +181,15 @@ class SalesDataProcessor:
             LEFT JOIN staging.business_place_staging bps ON t.business_place_name = bps.raw_value
             LEFT JOIN staging.order_type_staging ots ON t.order_type_name = ots.raw_value
             """
-            )
-
-        with self.engine.begin() as conn:
-            conn.execute(query)
+            
+        self.db_controller.execute_query(query)
 
 
 class ProfitAndLossProcessor:
     def __init__(self, engine):
         self.engine = engine
         self.config_data = ConfigLoader(r"configs/pl_data_config.json")
+        self.db_controller = DatabaseController(engine=engine)
 
     def read_excel(self, file_path_list):
 
@@ -270,8 +268,7 @@ class ProfitAndLossProcessor:
         Lấy dữ liệu từ bảng staging trong database và import vào bảng đích
         """
         
-        query = text(
-            f"""
+        query = f"""
             INSERT INTO main.profit_and_loss (
                 profit_center_key,
                 business_partner_key,
@@ -406,15 +403,13 @@ class ProfitAndLossProcessor:
                 AND (pal.date >= bp.valid_from AND (pal.date <= bp.valid_to OR bp.valid_to IS NULL))
             LEFT JOIN main.product p USING (product_code);
             """
-            )
 
-        with self.engine.begin() as conn:
-            conn.execute(query)
+        self.db_controller.execute_query(query)
 
 
 class BusinessPartnerUpdater:
     def __init__(self, engine, folder_path: Path):
-        self.engine = engine
+        self.db_controller = DatabaseController(engine=engine)
         self.data_folder = folder_path / "business_partner_data"
         self.config_data= ConfigLoader(r"configs/list_of_bp_config.json")
     
@@ -475,16 +470,13 @@ class BusinessPartnerUpdater:
         return df, has_error
     
     def update_data(self):
-        query = text(
-            """
+        query = """
             UPDATE main.business_partner bp
             SET (creation_date, ship_to_street, bill_to_street) = (bps.creation_date, bps.ship_to_street, bps.bill_to_street)
             FROM staging.business_partner_staging bps 
             WHERE bp.business_partner_code = bps.business_partner_code
         """
-        )
 
-        with self.engine.begin() as conn:
-            conn.execute(query)
+        self.db_controller.execute_query(query)
         
         print("Cập nhật dữ liệu thành công!")
