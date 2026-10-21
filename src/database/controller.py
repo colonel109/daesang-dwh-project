@@ -50,3 +50,10 @@ class DatabaseController:
             conn.execute(sql)
 
         print(f"Làm mới thành công!")
+    
+    def execute_query(self, sql_query):
+        "Thực thi câu lệnh sql, tự động rollback nếu có exception"
+
+        query = text(sql_query)
+        with self.engine.begin() as conn:
+            conn.execute(query)
