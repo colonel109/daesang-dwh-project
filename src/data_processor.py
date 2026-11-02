@@ -169,7 +169,7 @@ class SalesDataProcessor:
             JOIN main.scenario s ON t.scenario_name = s.scenario_name
             LEFT JOIN main.products p ON t.product_code = p.product_code 
             LEFT JOIN main.products pm ON t.source_product_code = pm.product_code
-            LEFT JOIN main.store_location st ON TRIM(t.location_code) = st.location_code AND st.bp_group_key = bpg.bp_group_key
+            LEFT JOIN main.store_locations st ON TRIM(t.location_code) = st.location_code AND st.bp_group_key = bpg.bp_group_key
             LEFT JOIN staging.document_type_staging dts ON t.document_type_name = dts.raw_value
             LEFT JOIN staging.sell_type_staging sts ON t.sell_type_name = sts.raw_value
             LEFT JOIN staging.cost_center_staging ccs ON t.cost_center_code = ccs.raw_value
