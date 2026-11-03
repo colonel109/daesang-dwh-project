@@ -1,6 +1,5 @@
 import pandas as pd
 from sqlalchemy import text
-from src.database.structure import Base
 
 
 class DatabaseController:
